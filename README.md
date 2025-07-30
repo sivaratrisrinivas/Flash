@@ -32,11 +32,15 @@ In short, Flash isn't just code—it's a working example of how to build helpful
 2.  **Install tools:** In your project folder, run `bun add @upstash/redis`.
 3.  **Run the example:** Open the `index.ts` file, paste in your own Upstash URL and Token, and run `bun index.ts` in your terminal.
 
+## Building as a Package
+To create the JavaScript and TypeScript output, run: bun run build
+This will create a `dist/` folder with the package files. The `dist/` folder is ignored in git (see `.gitignore`).  
+This makes it easy to reuse the autocomplete class in other projects or publish it as an npm package.
+
 You will see it reset the data, add a few fruits, print their scores, and then show suggestions for "ap" and "b".
 
 ## Next Steps
 
-*   Bundle the code into a reusable package.
 *   Write automated tests to ensure it always works correctly.
 *   Create a live demo deployed on a service like Vercel.
 
