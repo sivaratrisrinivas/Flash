@@ -17,6 +17,9 @@ export class Autocomplete {
   }
 
   async addSuggestion(item: string, scoreIncrement: number = 1): Promise<void> {
+    if (!item || typeof item !== 'string') {
+      throw new Error('Invalid suggestion item: must be a non-empty string');
+    }
     const key = 'autocomplete:suggestions'; // ZSET key
     await this.redis.zincrby(key, scoreIncrement, item);
     console.log(`Added/Updated ${item} with increment ${scoreIncrement}`);
@@ -24,6 +27,9 @@ export class Autocomplete {
 
   async getSuggestions(prefix: string, options: SuggestOptions = {}): Promise<Suggestion[]> {
     const { limit = 5 } = options;
+    if (limit < 1) {
+      return []; // Early return for invalid/zero limit
+    }
     const key = 'autocomplete:suggestions';
     
     // Fetch top 100 items by score descending (adjust 100 if needed for larger sets)
@@ -51,7 +57,7 @@ export class Autocomplete {
 
 // Usage example (for testing multiple fruits and queries)
 (async () => {
-  const client = new Redis({ url: 'https://better-frog-5017.upstash.io', token: 'AROZAAIjcDE3ZDc2ZTk3ZGNlNTY0MzhjOWFjMjdmZDIyM2JmZTE3ZXAxMA' });
+  const client = new Redis({ url: "https://better-frog-5017.upstash.io", token: "AROZAAIjcDE3ZDc2ZTk3ZGNlNTY0MzhjOWFjMjdmZDIyM2JmZTE3ZXAxMA" });
   const ac = new Autocomplete(client);
 
   const key = 'autocomplete:suggestions';
