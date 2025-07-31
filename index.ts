@@ -57,7 +57,15 @@ export class Autocomplete {
 
 // Usage example (for testing multiple fruits and queries)
 (async () => {
-  const client = new Redis({ url: "https://better-frog-5017.upstash.io", token: "AROZAAIjcDE3ZDc2ZTk3ZGNlNTY0MzhjOWFjMjdmZDIyM2JmZTE3ZXAxMA" });
+  // Validate Redis environment variables
+  if (!process.env.UPSTASH_REDIS_URL) {
+    throw new Error('UPSTASH_REDIS_URL environment variable is required but not set');
+  }
+  if (!process.env.UPSTASH_REDIS_TOKEN) {
+    throw new Error('UPSTASH_REDIS_TOKEN environment variable is required but not set');
+  }
+
+  const client = new Redis({ url: process.env.UPSTASH_REDIS_URL, token: process.env.UPSTASH_REDIS_TOKEN });
   const ac = new Autocomplete(client);
 
   const key = 'autocomplete:suggestions';
