@@ -4,8 +4,15 @@
   "description": "Real-Time Autocomplete SDK Extension for Upstash Redis",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "module": "index.ts",
+  "module": "dist/index.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc --build"
   },
