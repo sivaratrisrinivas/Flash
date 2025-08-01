@@ -56,42 +56,42 @@ export class Autocomplete {
 }
 
 // Usage example (for testing multiple fruits and queries)
-(async () => {
-  // Validate Redis environment variables
-  if (!process.env.UPSTASH_REDIS_URL) {
-    throw new Error('UPSTASH_REDIS_URL environment variable is required but not set');
-  }
-  if (!process.env.UPSTASH_REDIS_TOKEN) {
-    throw new Error('UPSTASH_REDIS_TOKEN environment variable is required but not set');
-  }
+// (async () => {
+//   // Validate Redis environment variables
+//   if (!process.env.UPSTASH_REDIS_URL) {
+//     throw new Error('UPSTASH_REDIS_URL environment variable is required but not set');
+//   }
+//   if (!process.env.UPSTASH_REDIS_TOKEN) {
+//     throw new Error('UPSTASH_REDIS_TOKEN environment variable is required but not set');
+//   }
 
-  const client = new Redis({ url: process.env.UPSTASH_REDIS_URL, token: process.env.UPSTASH_REDIS_TOKEN });
-  const ac = new Autocomplete(client);
+//   const client = new Redis({ url: process.env.UPSTASH_REDIS_URL, token: process.env.UPSTASH_REDIS_TOKEN });
+//   const ac = new Autocomplete(client);
 
-  const key = 'autocomplete:suggestions';
+//   const key = 'autocomplete:suggestions';
 
-  // Reset the key before adding (clears previous data)
-  await client.del(key);
-  console.log('Reset autocomplete suggestions key');
+//   // Reset the key before adding (clears previous data)
+//   await client.del(key);
+//   console.log('Reset autocomplete suggestions key');
 
-  // Add multiple fruits
-  await ac.addSuggestion('apple', 1); // Score: 1
-  await ac.addSuggestion('banana', 1); // Score: 1
-  await ac.addSuggestion('banana', 1); // Increment to 2
-  await ac.addSuggestion('apricot', 1); // Score: 1
+//   // Add multiple fruits
+//   await ac.addSuggestion('apple', 1); // Score: 1
+//   await ac.addSuggestion('banana', 1); // Score: 1
+//   await ac.addSuggestion('banana', 1); // Increment to 2
+//   await ac.addSuggestion('apricot', 1); // Score: 1
 
-  // Check and log scores for multiple fruits
-  const fruits = ['apple', 'banana', 'apricot'];
-  for (const fruit of fruits) {
-    const score = await client.zscore(key, fruit);
-    console.log(`${fruit} score: ${score}`);
-  }
+//   // Check and log scores for multiple fruits
+//   const fruits = ['apple', 'banana', 'apricot'];
+//   for (const fruit of fruits) {
+//     const score = await client.zscore(key, fruit);
+//     console.log(`${fruit} score: ${score}`);
+//   }
 
-  // Test suggestions for "ap"
-  const apSuggestions = await ac.getSuggestions('ap', { limit: 2 });
-  console.log('Suggestions for "ap":', apSuggestions);
+//   // Test suggestions for "ap"
+//   const apSuggestions = await ac.getSuggestions('ap', { limit: 2 });
+//   console.log('Suggestions for "ap":', apSuggestions);
 
-  // Test suggestions for "b"
-  const bSuggestions = await ac.getSuggestions('b', { limit: 1 });
-  console.log('Suggestions for "b":', bSuggestions);
-})();
+//   // Test suggestions for "b"
+//   const bSuggestions = await ac.getSuggestions('b', { limit: 1 });
+//   console.log('Suggestions for "b":', bSuggestions);
+// })();
