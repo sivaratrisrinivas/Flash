@@ -1,121 +1,85 @@
+# Flash
 
-# Flash: Real-Time Autocomplete for Upstash Redis
+*A blazing-fast, real-time autocomplete SDK for Upstash Redis.*
 
-Flash is a simple tool built with TypeScript that adds a "search suggestions" feature to Upstash Redis. It uses a special list in Redis that keeps items sorted by score (like popularity) to give you fast, relevant suggestions as you type.
+## Overview
 
-This project demonstrates how to build helpful, developer-friendly tools for modern, serverless applications and distributed data.
+Flash makes it trivial to add scalable, instant search suggestions/autocomplete to any Upstash Redis database. Powered by modern TypeScript and Upstash’s globally distributed Redis, Flash is built for serverless, web, bot, and API projects that demand speed and simplicity.
 
----
+## Why Flash?
 
-## Why This Project?
-
-I created Flash to show how developers can extend Upstash—they make powerful databases (like Redis) truly easy to use without server headaches. I've faced slow and complicated search/autocomplete in my own projects, and wanted to make it fast and simple by combining TypeScript and Upstash.
-
-- **What does it solve?** Autocomplete is a common need (for search bars, product pickers, chat, etc.), but it’s often slow or hard to scale. Flash uses Upstash Redis’ sorted sets to give instant, ranked suggestions, proving that real-time search can be easy and global.
-- **Who is it for?** Developers building web apps, serverless APIs, or bots—anyone who wants plug-and-play autocomplete powered by Redis with zero infrastructure hassle.
-- **What does this demo prove?** That you can bundle modern TypeScript, efficient Redis logic, and a serverless approach into a drop-in autocomplete SDK—with professional-level testing, packaging, and documentation.
-
----
+- **Instant, Ranked Suggestions:** Uses Redis sorted sets for live, prefix-based search suggestions—ranked by score (e.g., popularity).
+- **Plug-and-Play Simplicity:** No server ops, no stateful headaches—just install, configure your Redis URL and token, and go.
+- **Battle-Tested Error Handling:** Gracefully handles all edge cases: empty prefix, missing/invalid data, zero/negative scores, and more.
+- **Developer First:** Strongly typed, well-tested, and documented.
 
 ## Features
 
-- **Add Suggestions:** Incrementally add items (like product names) to a Redis sorted set; their "score" (popularity) can be increased any time.
-- **Get Suggestions:** Query by prefix (e.g., `"ap"`), and get a ranked list back fast.
-- **Reset for Testing:** Each run may start with clean test data for consistent, predictable results.
-- **Robust Error Handling:** Multiple edge cases are tested—invalid input, missing data, empty state, negative/zero scores, etc.
+- **Add Suggestions:** Incrementally add (or boost the score of) any item—suggest what your users search for most.
+- **Get Suggestions:** Fetch a list of suggestions matching a prefix (with customizable result limits).
+- **Works Locally or Serverless:** Easily mock/test locally—no actual Redis needed for tests.
+- **Reset for Testing:** Start from a clean in-memory store for each test run.
 
----
+## Installation
 
-## Setup and Usage
-
-### Prerequisites
-
+**Prerequisites:**
 - [Bun](https://bun.sh/) (or Node.js)
-- Upstash account (free tier is fine)
+- Upstash Redis account (free tier supported)
 
-### Install
+**Install:**
 
-```
+```bash
 bun add @upstash/redis
 ```
 
-### Example Usage
+## Usage Example
 
-1. In `index.ts`, enter your Upstash Redis URL and Token.
-2. Run:
+1. **Configure:**  
+   In your `.env` or directly in your code, set your Upstash Redis credentials.
 
-   ```
-   bun index.ts
-   ```
+2. **Sample code (`index.ts` or your entrypoint):**
 
-3. You’ll see:
-   - Data is cleared/reset
-   - Fruits are added
-   - Scores are shown
-   - Suggestions for "ap" and "b" printed
+```typescript
+import { Autocomplete } from "flash-upstash-autocomplete";
+import { Redis } from "@upstash/redis";
 
-Example output:
+const client = new Redis({
+  url: process.env.UPSTASH_REDIS_URL!,
+  token: process.env.UPSTASH_REDIS_TOKEN!,
+});
+const ac = new Autocomplete(client);
 
+await ac.addSuggestion("apple", 1);
+await ac.addSuggestion("banana", 2);
+
+const results = await ac.getSuggestions("ap");
+console.log(results); // [ { item: "apple", score: 1 } ]
 ```
-Reset autocomplete suggestions key
-Added/Updated apple with increment 1
-...
-apple score: 1
-banana score: 2
-apricot score: 1
-Suggestions for "ap": [ { item: "apple", score: 1 }, { item: "apricot", score: 1 } ]
-Suggestions for "b": [ { item: "banana", score: 2 } ]
-```
-
----
-
-## Building as a Package
-
-To build the distributable JavaScript and TypeScript outputs in `dist/`, run:
-
-```
-bun run build
-```
-
-The build output is [ignored in git](./.gitignore).
-
----
 
 ## Running the Tests
 
-To ensure everything works—including edge cases and errors—run:
+Run comprehensive tests—including edge cases, limits, invalid input, and more—no actual Redis required:
 
-```
+```bash
 bun test
 ```
 
-### What is tested?
+### Tests include:
+- Adding, incrementing, and ranking suggestions
+- Empty/no-match scenarios
+- Zero/negative scores and input validation
+- Respects result limits
+- Works with a fast in-memory store/mocking
 
-- Adding, updating, and ranking suggestions
-- Querying with normal and empty prefixes
-- Handling of zero or negative scores
-- Input mistakes (null/undefined), missing data, and empty states
-- Respecting limits (including zero or missing limits)
-- No actual Redis server is needed—the tests use a fast mock
+## Building the Package
 
----
+Compile distributable outputs (JS & types) to `dist/`:
 
-## Next Steps
-
-- Build a live demo app/front-end
-- Experiment with advanced features (batch additions, case-insensitivity, fuzzy match)
-
----
-
-**Have fun using and learning from Flash! Contributions, questions, and improvements are always welcome.**
+```bash
+bun run build
 ```
 
-**How to use it:**  
-Copy the above into your project’s `README.md` (replacing the old content), then commit and push as you normally do.
+## Contributing & Next Steps
 
-This version is:
-- Clear and free of jargon
-- Explains the “why” very simply
-- Covers installation, usage, building, and especially **testing (including edge cases and errors)**
-- Friendly to real developers who might read/try your code
-
+- PRs, issues, and questions are always welcome!
+- Example extensions: case-insensitive search, fuzzy matching, or richer scoring.
